@@ -28,6 +28,7 @@ func (v *Vcf) SetHeader(cCtx *cli.Context, config Config) {
 
 }
 
+// Set the header lines of the VCF struct according to the config
 func (h *Header) setHeaderLines(config Config) {
 	for k, v := range config.Header {
 		h.HeaderLines = append(h.HeaderLines, HeaderLine{

@@ -1,42 +1,69 @@
 package bedgovcf
 
+//
+// CONFIG
+//
+
+// The main config struct
 type Config struct {
-	Header map[string]ConfigHeaderStruct
-	Chrom  ConfigStandardFieldStruct
-	Pos    ConfigStandardFieldStruct
-	Id     ConfigStandardFieldStruct
-	Ref    ConfigStandardFieldStruct
-	Alt    ConfigStandardFieldStruct
-	Qual   ConfigStandardFieldStruct
-	Filter ConfigStandardFieldStruct
-	Info   MapConfigInfoFormatStruct
-	Format MapConfigInfoFormatStruct
+	Header map[string]ConfigHeaderStruct // Additional headers to add to the VCF
+	Chrom  ConfigStandardFieldStruct     // The chromosome field
+	Pos    ConfigStandardFieldStruct     // The position field
+	Id     ConfigStandardFieldStruct     // The ID field
+	Ref    ConfigStandardFieldStruct     // The reference field
+	Alt    ConfigStandardFieldStruct     // The alt field
+	Qual   ConfigStandardFieldStruct     // The quality field
+	Filter ConfigStandardFieldStruct     // The filter field
+	Info   MapConfigInfoFormatStruct     // The info fields
+	Format MapConfigInfoFormatStruct     // The format fields
 }
 
+// The struct for the additional headers
 type ConfigHeaderStruct struct {
-	Name        string
-	Value       string
-	Description string
+	Name        string // The name of the header line
+	Value       string // The value of the header line
+	Description string // The description of the header line
 }
 
+// The struct for the standard fields
 type ConfigStandardFieldStruct struct {
-	Field   string
-	Value   string
-	Prefix  string
-	Options []ConfigHeaderStruct
+	Field   string               // The field to use as value
+	Value   string               // The value to use
+	Prefix  string               // The prefix to add to each value
+	Options []ConfigHeaderStruct // The different options possible (only for ALT and FILTER)
 }
 
+// The map for the info and format fields
 type MapConfigInfoFormatStruct map[string]ConfigInfoFormatStruct
 
+// The struct for the info and format fields
 type ConfigInfoFormatStruct struct {
-	Field       string
-	Value       string
-	Prefix      string
-	Description string
-	Number      string
-	Type        string
+	Field       string // The field to use as value
+	Value       string // The value to use
+	Prefix      string // The prefix to add to each value
+	Description string // The description of the field
+	Number      string // The number of values that can be included in the INFO field (e.g. 1, 2, A, R)
+	Type        string // The type of the header field (e.g. Integer, Float, Character, Flag)
 }
 
+//
+// VCF
+//
+
+// The main VCF struct
+type Vcf struct {
+	Header   Header    // The header of the VCF
+	Variants []Variant // The variants of the VCF
+}
+
+// The struct for the header
+type Header struct {
+	HeaderLines []HeaderLine // All conventional header lines
+	Version     string       // The version of the VCF file
+	Sample      string       // The sample name
+}
+
+// The struct for one header line
 type HeaderLine struct {
 	Category    string // The category of header line (e.g INFO, FORMAT, FILTER)
 	Id          string // The ID of the header line (e.g. SVLEN, GT, END)
@@ -47,33 +74,25 @@ type HeaderLine struct {
 	Content     string // The content of the header line (only for non usual header lines)
 }
 
-type Header struct {
-	HeaderLines []HeaderLine // All conventional header lines
-	Version     string       // The version of the VCF file
-	Sample      string       // The sample name
-}
-
-type Vcf struct {
-	Header   Header
-	Variants []Variant
-}
-
+// The struct for one variant
 type Variant struct {
-	Chrom  string
-	Pos    string
-	Id     string
-	Ref    string
-	Alt    string
-	Qual   string
-	Filter string
-	Info   MapVariantInfoFormat
-	Format MapVariantInfoFormat
+	Chrom  string               // The chromosome
+	Pos    string               // The position
+	Id     string               // The ID
+	Ref    string               // The reference allele
+	Alt    string               // The alternative allele
+	Qual   string               // The quality
+	Filter string               // The filter
+	Info   MapVariantInfoFormat // The info fields
+	Format MapVariantInfoFormat // The format fields
 }
 
+// The map for the info and format fields
 type MapVariantInfoFormat map[string]VariantInfoFormat
 
+// The struct for one info or format field
 type VariantInfoFormat struct {
-	Number string
-	Type   string
-	Value  string
+	Number string // The number of values that can be included in the INFO field (e.g. 1, 2, A, R)
+	Type   string // The type of the header field (e.g. Integer, Float, Character, Flag)
+	Value  string // The value of the field
 }

@@ -9,6 +9,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+// Read the configuration file, cast it to its struct and validate
 func ReadConfig(configString string) Config {
 	configFile, err := os.ReadFile(configString)
 	if err != nil {
@@ -25,6 +26,7 @@ func ReadConfig(configString string) Config {
 	return config
 }
 
+// Validate the config
 func (c *Config) validate() {
 	if c.Chrom.Field == "" {
 		log.Printf("No field defined for CHROM, defaulting to the column 0")
