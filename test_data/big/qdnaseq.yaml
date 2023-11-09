@@ -37,4 +37,4 @@ format:
   gt:
     value: 0/1
   cn:
-    field: 4
+    value: ~round $4

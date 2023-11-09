@@ -4,8 +4,10 @@ import (
 	"bufio"
 	"fmt"
 	"log"
+	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	cli "github.com/urfave/cli/v2"
@@ -201,7 +203,7 @@ func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) s
 		}
 		return prefix + values[headerIndex]
 	} else if cifs.Value != "" {
-		return prefix + cifs.Value
+		return prefix + resolveField(cifs.Value, values, header)
 	}
 	return ""
 }
@@ -224,8 +226,45 @@ func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string
 		}
 		return prefix + values[headerIndex]
 	} else if csfs.Value != "" {
-		return prefix + csfs.Value
+		return prefix + resolveField(csfs.Value, values, header)
 	}
+	return ""
+}
+
+func resolveField(value string, values []string, header []string) string {
+	rawInput := strings.Split(value, " ")
+	function := ""
+	if strings.HasPrefix(rawInput[0], "~") {
+		function = rawInput[0][1:]
+	} else {
+		return value
+	}
+
+	input := []string{}
+	for _, v := range rawInput {
+		if strings.HasPrefix(v, "$") {
+			var headerIndex int
+			for j, w := range header {
+				if w == v[1:] {
+					headerIndex = j
+					break
+				}
+			}
+			input = append(input, values[headerIndex])
+			continue
+		}
+		input = append(input, v)
+	}
+
+	switch function {
+	case "round":
+		float, err := strconv.ParseFloat(input[1], 64)
+		if err != nil {
+			log.Fatalf("Failed to parse the value (%v) to a float: %v", input[1], err)
+		}
+		return fmt.Sprintf("%v", math.Round(float))
+	}
+
 	return ""
 }
 
