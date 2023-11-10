@@ -11,7 +11,7 @@ id:
 ref:
   value: N
 alt:
-  value: <CNV>
+  value: ~if $4 < 0 <DEL> <DUP>
   options:
     - name: DEL
       description: Deletion
