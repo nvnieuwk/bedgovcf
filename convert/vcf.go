@@ -258,11 +258,23 @@ func resolveField(value string, values []string, header []string) string {
 
 	switch function {
 	case "round":
+		// ~round <value>
 		float, err := strconv.ParseFloat(input[1], 64)
 		if err != nil {
 			log.Fatalf("Failed to parse the value (%v) to a float: %v", input[1], err)
 		}
 		return fmt.Sprintf("%v", math.Round(float))
+	case "sum":
+		// ~sum <value1> <value2> ...
+		var sum float64
+		for _, v := range input[1:] {
+			float, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				log.Fatalf("Failed to parse the value (%v) to a float: %v", input[1], err)
+			}
+			sum += float
+		}
+		return strconv.FormatFloat(sum, 'g', 5, 64)
 	}
 
 	return ""
