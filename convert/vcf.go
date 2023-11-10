@@ -271,11 +271,25 @@ func resolveField(value string, values []string, header []string) string {
 		for _, v := range input[1:] {
 			float, err := strconv.ParseFloat(v, 64)
 			if err != nil {
-				log.Fatalf("Failed to parse the value (%v) to a float: %v", input[1], err)
+				log.Fatalf("Failed to parse the value (%v) to a float: %v", v, err)
 			}
 			sum += float
 		}
 		return strconv.FormatFloat(sum, 'g', 5, 64)
+	case "min":
+		// ~min <startValue> <valueToSubstract1> <valueToSubstract2> ...
+		min, err := strconv.ParseFloat(input[1], 64)
+		if err != nil {
+			log.Fatalf("Failed to parse the value (%v) to a float: %v", input[1], err)
+		}
+		for _, v := range input[2:] {
+			float, err := strconv.ParseFloat(v, 64)
+			if err != nil {
+				log.Fatalf("Failed to parse the value (%v) to a float: %v", v, err)
+			}
+			min -= float
+		}
+		return strconv.FormatFloat(min, 'g', 5, 64)
 	case "if":
 		// ~if <value1> <operator> <value2> <value_if_true> <value_if_false>
 		// supported operators: > < >= <= ==
