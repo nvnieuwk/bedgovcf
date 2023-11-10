@@ -33,6 +33,8 @@ info:
     value: CNV
   tool:
     value: qdnaseq
+  svlen:
+    value: ~min $2 $1
 format:
   gt:
     value: 0/1

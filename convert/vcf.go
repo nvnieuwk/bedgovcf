@@ -275,7 +275,8 @@ func resolveField(value string, values []string, header []string) string {
 			}
 			sum += float
 		}
-		return strconv.FormatFloat(sum, 'g', 5, 64)
+
+		return strconv.FormatFloat(sum, 'g', -1, 64)
 	case "min":
 		// ~min <startValue> <valueToSubstract1> <valueToSubstract2> ...
 		min, err := strconv.ParseFloat(input[1], 64)
@@ -289,7 +290,7 @@ func resolveField(value string, values []string, header []string) string {
 			}
 			min -= float
 		}
-		return strconv.FormatFloat(min, 'g', 5, 64)
+		return strconv.FormatFloat(min, 'g', -1, 64)
 	case "if":
 		// ~if <value1> <operator> <value2> <value_if_true> <value_if_false>
 		// supported operators: > < >= <= ==
