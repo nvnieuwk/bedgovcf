@@ -6,22 +6,22 @@ package bedgovcf
 
 // The main config struct
 type Config struct {
-	Header map[string]ConfigHeaderStruct // Additional headers to add to the VCF
-	Chrom  ConfigStandardFieldStruct     // The chromosome field
-	Pos    ConfigStandardFieldStruct     // The position field
-	Id     ConfigStandardFieldStruct     // The ID field
-	Ref    ConfigStandardFieldStruct     // The reference field
-	Alt    ConfigStandardFieldStruct     // The alt field
-	Qual   ConfigStandardFieldStruct     // The quality field
-	Filter ConfigStandardFieldStruct     // The filter field
-	Info   MapConfigInfoFormatStruct     // The info fields
-	Format MapConfigInfoFormatStruct     // The format fields
+	Header []ConfigHeaderStruct        // Additional headers to add to the VCF
+	Chrom  ConfigStandardFieldStruct   // The chromosome field
+	Pos    ConfigStandardFieldStruct   // The position field
+	Id     ConfigStandardFieldStruct   // The ID field
+	Ref    ConfigStandardFieldStruct   // The reference field
+	Alt    ConfigStandardFieldStruct   // The alt field
+	Qual   ConfigStandardFieldStruct   // The quality field
+	Filter ConfigStandardFieldStruct   // The filter field
+	Info   SliceConfigInfoFormatStruct // The info fields
+	Format SliceConfigInfoFormatStruct // The format fields
 }
 
 // The struct for the additional headers
 type ConfigHeaderStruct struct {
 	Name        string // The name of the header line
-	Value       string // The value of the header line
+	Content     string // The content of the header line
 	Description string // The description of the header line
 }
 
@@ -32,11 +32,11 @@ type ConfigStandardFieldStruct struct {
 	Options []ConfigHeaderStruct // The different options possible (only for ALT and FILTER)
 }
 
-// The map for the info and format fields
-type MapConfigInfoFormatStruct map[string]ConfigInfoFormatStruct
+type SliceConfigInfoFormatStruct []ConfigInfoFormatStruct
 
 // The struct for the info and format fields
 type ConfigInfoFormatStruct struct {
+	Name        string // The name of the current INFO or FORMAT field
 	Value       string // The value to use
 	Prefix      string // The prefix to add to each value
 	Description string // The description of the field

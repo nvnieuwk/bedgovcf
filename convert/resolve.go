@@ -128,18 +128,16 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 				return nil, vFalseResolved
 			}
 		case "==":
-			if err1 == nil && err2 == nil {
-				if floatV1 == floatV2 {
-					return nil, vTrue
-				} else {
-					return nil, vFalseResolved
-				}
+			if v1 == v2 {
+				return nil, vTrue
 			} else {
-				if v1 == v2 {
-					return nil, vTrue
-				} else {
-					return nil, vFalseResolved
-				}
+				return nil, vFalseResolved
+			}
+		case "!=":
+			if v1 != v2 {
+				return nil, vTrue
+			} else {
+				return nil, vFalseResolved
 			}
 		}
 	}

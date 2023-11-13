@@ -44,10 +44,10 @@ func (v *Vcf) SetHeader(cCtx *cli.Context, config Config) error {
 
 // Set the header lines of the VCF struct according to the config
 func (h *Header) setHeaderLines(config Config) error {
-	for k, v := range config.Header {
+	for _, v := range config.Header {
 		h.HeaderLines = append(h.HeaderLines, HeaderLine{
-			Category: k,
-			Content:  v.Value,
+			Category: v.Name,
+			Content:  v.Content,
 		})
 	}
 
@@ -59,7 +59,7 @@ func (h *Header) setHeaderLines(config Config) error {
 		})
 	}
 
-	for k, v := range config.Info {
+	for _, v := range config.Info {
 		number := v.Number
 		if number == "" {
 			number = "."
@@ -70,14 +70,14 @@ func (h *Header) setHeaderLines(config Config) error {
 		}
 		h.HeaderLines = append(h.HeaderLines, HeaderLine{
 			Category:    "INFO",
-			Id:          k,
+			Id:          v.Name,
 			Number:      number,
 			Type:        typeField,
 			Description: v.Description,
 		})
 	}
 
-	for k, v := range config.Format {
+	for _, v := range config.Format {
 		number := v.Number
 		if number == "" {
 			number = "."
@@ -88,7 +88,7 @@ func (h *Header) setHeaderLines(config Config) error {
 		}
 		h.HeaderLines = append(h.HeaderLines, HeaderLine{
 			Category:    "FORMAT",
-			Id:          k,
+			Id:          v.Name,
 			Number:      number,
 			Type:        typeField,
 			Description: v.Description,
@@ -218,14 +218,14 @@ func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) error {
 }
 
 // Get the values of all info fields and transform them to a map
-func (mcifs *MapConfigInfoFormatStruct) getValues(values []string, header []string) (error, MapVariantInfoFormat) {
+func (mcifs *SliceConfigInfoFormatStruct) getValues(values []string, header []string) (error, MapVariantInfoFormat) {
 	infoMap := MapVariantInfoFormat{}
-	for k, v := range *mcifs {
+	for _, v := range *mcifs {
 		err, value := v.getValue(values, header)
 		if err != nil {
 			return err, nil
 		}
-		infoMap[k] = VariantInfoFormat{
+		infoMap[v.Name] = VariantInfoFormat{
 			Number: v.Number,
 			Type:   v.Type,
 			Value:  value,

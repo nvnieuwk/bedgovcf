@@ -66,17 +66,17 @@ func (c *Config) validate() {
 	}
 
 	if len(c.Info) != 0 {
-		for k, v := range c.Info {
+		for _, v := range c.Info {
 			if v.Value == "" {
-				logger.Printf("No value specified for the INFO/%v", strings.ToUpper(k))
+				logger.Printf("No value specified for the INFO/%v", strings.ToUpper(v.Name))
 			}
 		}
 	}
 
 	if len(c.Format) != 0 {
-		for k, v := range c.Format {
+		for _, v := range c.Format {
 			if v.Value == "" {
-				logger.Printf("No value specified for the FORMAT/%v", strings.ToUpper(k))
+				logger.Printf("No value specified for the FORMAT/%v", strings.ToUpper(v.Name))
 			}
 		}
 	}

@@ -1,0 +1,30 @@
+id:
+  prefix: test_
+alt:
+  value: ~if $3 < 0 <DEL> <DUP>
+  options:
+    - name: DEL
+      description: Deletion
+    - name: DUP
+      description: Duplication
+filter:
+  value: $4
+  options:
+    - name: PASS
+      description: All filters passed
+    - name: LOWQUAL
+      description: Low quality
+info:
+  - name: svtype
+    value: <CNV>
+  - name: svlen
+    value: ~min $2 $1
+  - name: end
+    value: $2
+  - name: cnv_ratio
+    value: $3
+format:
+  - name: gt
+    value: 0/1
+  - name: cn
+    value: ~round $3

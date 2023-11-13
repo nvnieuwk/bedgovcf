@@ -49,10 +49,10 @@ func TestSetContigs(t *testing.T) {
 func TestSetHeaderLines(t *testing.T) {
 	header := Header{}
 	config := Config{
-		Header: map[string]ConfigHeaderStruct{
-			"test": {
-				Name:  "test",
-				Value: "test",
+		Header: []ConfigHeaderStruct{
+			{
+				Name:    "test",
+				Content: "test",
 			},
 		},
 		Alt: ConfigStandardFieldStruct{
@@ -73,16 +73,18 @@ func TestSetHeaderLines(t *testing.T) {
 				},
 			},
 		},
-		Info: MapConfigInfoFormatStruct{
-			"SVLEN": ConfigInfoFormatStruct{
+		Info: SliceConfigInfoFormatStruct{
+			{
+				Name:        "SVLEN",
 				Value:       "$test",
 				Description: "The length of the SV",
 				Number:      "1",
 				Type:        "Integer",
 			},
 		},
-		Format: MapConfigInfoFormatStruct{
-			"GT": ConfigInfoFormatStruct{
+		Format: SliceConfigInfoFormatStruct{
+			{
+				Name:        "GT",
 				Value:       "$test",
 				Description: "Genotype",
 				Number:      "1",
@@ -266,7 +268,7 @@ func TestVariantString(t *testing.T) {
 	}
 
 	if variant.String(1) != "chr1	123	test1	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n" {
-		t.Fatalf("Expected variant string to be 'chr1	123	test	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n', got '%s'", variant.String(1))
+		t.Fatalf("Expected variant string to be 'chr1	123	test1	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n', got '%s'", variant.String(1))
 	}
 
 }
