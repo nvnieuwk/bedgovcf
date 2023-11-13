@@ -74,22 +74,23 @@ type HeaderLine struct {
 
 // The struct for one variant
 type Variant struct {
-	Chrom  string               // The chromosome
-	Pos    string               // The position
-	Id     string               // The ID
-	Ref    string               // The reference allele
-	Alt    string               // The alternative allele
-	Qual   string               // The quality
-	Filter string               // The filter
-	Info   MapVariantInfoFormat // The info fields
-	Format MapVariantInfoFormat // The format fields
+	Chrom  string                 // The chromosome
+	Pos    string                 // The position
+	Id     string                 // The ID
+	Ref    string                 // The reference allele
+	Alt    string                 // The alternative allele
+	Qual   string                 // The quality
+	Filter string                 // The filter
+	Info   SliceVariantInfoFormat // The info fields
+	Format SliceVariantInfoFormat // The format fields
 }
 
 // The map for the info and format fields
-type MapVariantInfoFormat map[string]VariantInfoFormat
+type SliceVariantInfoFormat []VariantInfoFormat
 
 // The struct for one info or format field
 type VariantInfoFormat struct {
+	Name   string // The name of the current INFO or FORMAT field
 	Number string // The number of values that can be included in the INFO field (e.g. 1, 2, A, R)
 	Type   string // The type of the header field (e.g. Integer, Float, Character, Flag)
 	Value  string // The value of the field

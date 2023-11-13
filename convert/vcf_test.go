@@ -213,15 +213,17 @@ func TestVariantString(t *testing.T) {
 		Alt:    "C",
 		Qual:   "100",
 		Filter: "PASS",
-		Info: MapVariantInfoFormat{
-			"SVLEN": VariantInfoFormat{
+		Info: SliceVariantInfoFormat{
+			{
+				Name:   "SVLEN",
 				Number: "1",
 				Type:   "Integer",
 				Value:  "100",
 			},
 		},
-		Format: MapVariantInfoFormat{
-			"GT": VariantInfoFormat{
+		Format: SliceVariantInfoFormat{
+			{
+				Name:   "GT",
 				Number: "1",
 				Type:   "String",
 				Value:  "0/1",
@@ -241,25 +243,29 @@ func TestVariantString(t *testing.T) {
 		Alt:    "C",
 		Qual:   "100",
 		Filter: "PASS",
-		Info: MapVariantInfoFormat{
-			"SVLEN": VariantInfoFormat{
+		Info: SliceVariantInfoFormat{
+			{
+				Name:   "SVLEN",
 				Number: "1",
 				Type:   "Integer",
 				Value:  "100",
 			},
-			"SVTYPE": VariantInfoFormat{
+			{
+				Name:   "SVTYPE",
 				Number: "1",
 				Type:   "String",
 				Value:  "DEL",
 			},
 		},
-		Format: MapVariantInfoFormat{
-			"GT": VariantInfoFormat{
+		Format: SliceVariantInfoFormat{
+			{
+				Name:   "GT",
 				Number: "1",
 				Type:   "String",
 				Value:  "0/1",
 			},
-			"CN": VariantInfoFormat{
+			{
+				Name:   "CN",
 				Number: "1",
 				Type:   "Integer",
 				Value:  "2",

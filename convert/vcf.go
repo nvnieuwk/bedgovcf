@@ -218,18 +218,19 @@ func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) error {
 }
 
 // Get the values of all info fields and transform them to a map
-func (mcifs *SliceConfigInfoFormatStruct) getValues(values []string, header []string) (error, MapVariantInfoFormat) {
-	infoMap := MapVariantInfoFormat{}
+func (mcifs *SliceConfigInfoFormatStruct) getValues(values []string, header []string) (error, SliceVariantInfoFormat) {
+	infoMap := SliceVariantInfoFormat{}
 	for _, v := range *mcifs {
 		err, value := v.getValue(values, header)
 		if err != nil {
 			return err, nil
 		}
-		infoMap[v.Name] = VariantInfoFormat{
+		infoMap = append(infoMap, VariantInfoFormat{
+			Name:   v.Name,
 			Number: v.Number,
 			Type:   v.Type,
 			Value:  value,
-		}
+		})
 	}
 	return nil, infoMap
 }
@@ -312,10 +313,10 @@ func (v Variant) String(count int) string {
 }
 
 // Convert the info map to a string
-func (mvif MapVariantInfoFormat) infoString() string {
+func (mvif SliceVariantInfoFormat) infoString() string {
 	var infoSlice []string
-	for k, v := range mvif {
-		upperInfo := strings.ToUpper(k)
+	for _, v := range mvif {
+		upperInfo := strings.ToUpper(v.Name)
 		switch infoType := strings.ToLower(v.Type); infoType {
 		case "flag":
 			infoSlice = append(infoSlice, upperInfo)
@@ -328,11 +329,11 @@ func (mvif MapVariantInfoFormat) infoString() string {
 }
 
 // Convert the format map to a string
-func (mcifs MapVariantInfoFormat) formatString() string {
+func (mvif SliceVariantInfoFormat) formatString() string {
 	var formatField []string
 	var formatValues []string
-	for k, v := range mcifs {
-		upperFormat := strings.ToUpper(k)
+	for _, v := range mvif {
+		upperFormat := strings.ToUpper(v.Name)
 		formatField = append(formatField, upperFormat)
 		formatValues = append(formatValues, v.Value)
 	}
