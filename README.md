@@ -10,17 +10,17 @@ bedgovcf --bed <input.bed> --config <config.yaml> --fai <reference.fai>
 ### Required Arguments
 | Argument | Description |
 | --- | --- |
-| `--bed` | Path to the BED file to convert |
-| `--config` | Path to the YAML configuration file |
-| `--fai` | Path to the FASTA index file of the reference genome |
+| `--bed <path>` | Path to the BED file to convert |
+| `--config <path>` | Path to the YAML configuration file |
+| `--fai <path>` | Path to the FASTA index file of the reference genome |
 
 ### Optional Arguments
 | Argument | Description |
 | --- | --- |
-| `--output` | Path to the output VCF file (default: stdout) |
-| `--skip` | Skip the first N lines of the BED file (default: 0) |
+| `--output <path>` | Path to the output VCF file (default: stdout) |
+| `--skip <integer>` | Skip the first N lines of the BED file (default: 0) |
 | `--header` | The BED file has a header (default: false) |
-| `--sample` | Sample name to use in the VCF file (default: prefix of the BED file) |
+| `--sample <string>` | Sample name to use in the VCF file (default: prefix of the BED file) |
 
 ## The configuration file
 The configuration file can be used to tell `bedgovcf` how to handle the BED file. It is a YAML file with the following structure:
