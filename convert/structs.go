@@ -27,7 +27,6 @@ type ConfigHeaderStruct struct {
 
 // The struct for the standard fields
 type ConfigStandardFieldStruct struct {
-	Field   string               // The field to use as value
 	Value   string               // The value to use
 	Prefix  string               // The prefix to add to each value
 	Options []ConfigHeaderStruct // The different options possible (only for ALT and FILTER)
@@ -38,7 +37,6 @@ type MapConfigInfoFormatStruct map[string]ConfigInfoFormatStruct
 
 // The struct for the info and format fields
 type ConfigInfoFormatStruct struct {
-	Field       string // The field to use as value
 	Value       string // The value to use
 	Prefix      string // The prefix to add to each value
 	Description string // The description of the field

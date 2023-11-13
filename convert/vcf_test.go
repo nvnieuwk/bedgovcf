@@ -56,7 +56,7 @@ func TestSetHeaderLines(t *testing.T) {
 			},
 		},
 		Alt: ConfigStandardFieldStruct{
-			Field: "test",
+			Value: "$test",
 			Options: []ConfigHeaderStruct{
 				{
 					Name:        "DUP",
@@ -65,7 +65,7 @@ func TestSetHeaderLines(t *testing.T) {
 			},
 		},
 		Filter: ConfigStandardFieldStruct{
-			Field: "test",
+			Value: "$test",
 			Options: []ConfigHeaderStruct{
 				{
 					Name:        "PASS",
@@ -75,7 +75,7 @@ func TestSetHeaderLines(t *testing.T) {
 		},
 		Info: MapConfigInfoFormatStruct{
 			"SVLEN": ConfigInfoFormatStruct{
-				Field:       "test",
+				Value:       "$test",
 				Description: "The length of the SV",
 				Number:      "1",
 				Type:        "Integer",
@@ -83,7 +83,7 @@ func TestSetHeaderLines(t *testing.T) {
 		},
 		Format: MapConfigInfoFormatStruct{
 			"GT": ConfigInfoFormatStruct{
-				Field:       "test",
+				Value:       "$test",
 				Description: "Genotype",
 				Number:      "1",
 				Type:        "String",
@@ -142,7 +142,7 @@ func TestSetHeaderLines(t *testing.T) {
 
 func TestStandardGetValue(t *testing.T) {
 	config := ConfigStandardFieldStruct{
-		Field: "test",
+		Value: "$test",
 	}
 	header := []string{"test", "test2"}
 	values := []string{"value", "I don't want this"}
@@ -161,7 +161,7 @@ func TestStandardGetValue(t *testing.T) {
 	}
 
 	config = ConfigStandardFieldStruct{
-		Field: "2",
+		Value: "$2",
 	}
 	header = []string{"0", "1", "2", "3"}
 	values = []string{"value", "I don't want this", "this is the one", "definitely not this"}
@@ -173,7 +173,7 @@ func TestStandardGetValue(t *testing.T) {
 
 func TestInfoFormatGetValue(t *testing.T) {
 	config := ConfigInfoFormatStruct{
-		Field: "test",
+		Value: "$test",
 	}
 	header := []string{"test", "test2"}
 	values := []string{"value", "I don't want this"}
@@ -192,7 +192,7 @@ func TestInfoFormatGetValue(t *testing.T) {
 	}
 
 	config = ConfigInfoFormatStruct{
-		Field: "2",
+		Value: "$2",
 	}
 	header = []string{"0", "1", "2", "3"}
 	values = []string{"value", "I don't want this", "this is the one", "definitely not this"}
@@ -227,8 +227,8 @@ func TestVariantString(t *testing.T) {
 		},
 	}
 
-	if variant.String() != "chr1\t123\ttest\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n" {
-		t.Fatalf("Expected variant string to be 'chr1\t123\ttest\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n', got '%s'", variant.String())
+	if variant.String(1) != "chr1\t123\ttest1\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n" {
+		t.Fatalf("Expected variant string to be 'chr1\t123\ttest\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n', got '%s'", variant.String(1))
 	}
 
 	variant = Variant{
@@ -265,8 +265,8 @@ func TestVariantString(t *testing.T) {
 		},
 	}
 
-	if variant.String() != "chr1	123	test	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n" {
-		t.Fatalf("Expected variant string to be 'chr1	123	test	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n', got '%s'", variant.String())
+	if variant.String(1) != "chr1	123	test1	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n" {
+		t.Fatalf("Expected variant string to be 'chr1	123	test	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n', got '%s'", variant.String(1))
 	}
 
 }

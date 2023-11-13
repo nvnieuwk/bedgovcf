@@ -190,20 +190,8 @@ func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) s
 		prefix = cifs.Prefix
 	}
 
-	// TODO write a resolve function for conditional fields
-	if cifs.Field != "" {
-		var headerIndex int
-		for i, v := range header {
-			if v == cifs.Field {
-				headerIndex = i
-				break
-			}
-		}
-		return prefix + values[headerIndex]
-	} else if cifs.Value != "" {
-		return prefix + cifs.Value
-	}
-	return ""
+	return prefix + resolveField(strings.Split(cifs.Value, " "), values, header)
+
 }
 
 // Get the value for the given field based on the config
@@ -213,20 +201,8 @@ func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string
 		prefix = csfs.Prefix
 	}
 
-	// TODO write a resolve function for conditional fields
-	if csfs.Field != "" {
-		var headerIndex int
-		for i, v := range header {
-			if v == csfs.Field {
-				headerIndex = i
-				break
-			}
-		}
-		return prefix + values[headerIndex]
-	} else if csfs.Value != "" {
-		return prefix + csfs.Value
-	}
-	return ""
+	return prefix + resolveField(strings.Split(csfs.Value, " "), values, header)
+
 }
 
 // Write the VCF struct to stdout or a file
@@ -238,8 +214,8 @@ func (v *Vcf) Write(cCtx *cli.Context) {
 
 	if stdout {
 		fmt.Print(v.Header.String())
-		for _, variant := range v.Variants {
-			fmt.Print(variant.String())
+		for count, variant := range v.Variants {
+			fmt.Print(variant.String(count))
 		}
 	} else {
 		file, err := os.Create(cCtx.String("output"))
@@ -248,19 +224,21 @@ func (v *Vcf) Write(cCtx *cli.Context) {
 		}
 		defer file.Close()
 		file.WriteString(v.Header.String())
-		for _, variant := range v.Variants {
-			file.WriteString(variant.String())
+		for count, variant := range v.Variants {
+			file.WriteString(variant.String(count))
 		}
 	}
 }
 
 // Convert a variant to a string
-func (v Variant) String() string {
+func (v Variant) String(count int) string {
+
+	id := fmt.Sprintf("%v%v", v.Id, count)
 
 	variant := strings.Join([]string{
 		v.Chrom,
 		v.Pos,
-		v.Id,
+		id,
 		v.Ref,
 		v.Alt,
 		v.Qual,

@@ -2,16 +2,16 @@ header:
   test:
     value: "test"
 chrom:
-  field: 0
+  value: $0
   prefix: chr
 pos:
-  field: 1
+  value: $1
 id:
   prefix: qdnaseq_
 ref:
   value: N
 alt:
-  value: <CNV>
+  value: ~if $4 < 0 <DEL> <DUP>
   options:
     - name: DEL
       description: Deletion
@@ -26,15 +26,17 @@ filter:
       description: All filters passed
 info:
   cnv_ratio:
-    field: 4
+    value: $4
   end:
-    field: 2
+    value: $2
   svtype:
     value: CNV
   tool:
     value: qdnaseq
+  svlen:
+    value: ~min $2 $1
 format:
   gt:
     value: 0/1
   cn:
-    field: 4
+    value: ~round $4
