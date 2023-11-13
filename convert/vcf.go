@@ -2,8 +2,8 @@ package bedgovcf
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,22 +14,36 @@ import (
 )
 
 // Set the header of the VCF struct according to the config and fai
-func (v *Vcf) SetHeader(cCtx *cli.Context, config Config) {
-	v.Header.setVersion("4.2")
-
-	if cCtx.String("sample") == "" {
-		v.Header.setSample(strings.Split(filepath.Base(cCtx.String("bed")), ".")[0])
-	} else {
-		v.Header.setSample(cCtx.String("sample"))
+func (v *Vcf) SetHeader(cCtx *cli.Context, config Config) error {
+	err := v.Header.setVersion("4.2")
+	if err != nil {
+		return err
 	}
 
-	v.Header.setHeaderLines(config)
-	v.Header.setContigs(cCtx.String("fai"))
+	if cCtx.String("sample") == "" {
+		err = v.Header.setSample(strings.Split(filepath.Base(cCtx.String("bed")), ".")[0])
+	} else {
+		err = v.Header.setSample(cCtx.String("sample"))
+	}
+	if err != nil {
+		return err
+	}
 
+	err = v.Header.setHeaderLines(config)
+	if err != nil {
+		return err
+	}
+
+	err = v.Header.setContigs(cCtx.String("fai"))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Set the header lines of the VCF struct according to the config
-func (h *Header) setHeaderLines(config Config) {
+func (h *Header) setHeaderLines(config Config) error {
 	for k, v := range config.Header {
 		h.HeaderLines = append(h.HeaderLines, HeaderLine{
 			Category: k,
@@ -89,22 +103,25 @@ func (h *Header) setHeaderLines(config Config) {
 		})
 	}
 
+	return nil
 }
 
-func (h *Header) setSample(sample string) {
+func (h *Header) setSample(sample string) error {
 	h.Sample = sample
+	return nil
 }
 
-func (h *Header) setVersion(version string) {
+func (h *Header) setVersion(version string) error {
 	h.Version = version
+	return nil
 }
 
 // Read the fasta index file and add the contigs to the VCF header
-func (h *Header) setContigs(faidx string) {
+func (h *Header) setContigs(faidx string) error {
 
 	file, err := os.Open(faidx)
 	if err != nil {
-		log.Fatalf("Failed to open the fasta index file: %v", err)
+		return errors.New(fmt.Sprintf("Failed to open the fasta index file: %v", err))
 	}
 	defer file.Close()
 
@@ -117,13 +134,14 @@ func (h *Header) setContigs(faidx string) {
 			Length:   line[1],
 		})
 	}
+	return nil
 }
 
 // Read the BED file and add the variants to the VCF struct
-func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) {
+func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) error {
 	file, err := os.Open(cCtx.String("bed"))
 	if err != nil {
-		log.Fatalf("Failed to open the bed file: %v", err)
+		return errors.New(fmt.Sprintf("Failed to open the bed file: %v", err))
 	}
 	defer file.Close()
 
@@ -150,63 +168,106 @@ func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) {
 		}
 
 		if len(line) != len(header) {
-			log.Fatal("The amount of columns in the BED file is not consistent.\n Check if there aren't any additional lines at the top of the bed file (and use --skip to tell bedgovcf to skip these lines).")
+			return errors.New("The amount of columns in the BED file is not consistent.\n Check if there aren't any additional lines at the top of the bed file (and use --skip to tell bedgovcf to skip these lines).")
 		}
 
 		variant := Variant{}
 
 		//Standard fields
-		variant.Chrom = config.Chrom.getValue(line, header)
-		variant.Pos = config.Pos.getValue(line, header)
-		variant.Id = config.Id.getValue(line, header)
-		variant.Ref = config.Ref.getValue(line, header)
-		variant.Alt = config.Alt.getValue(line, header)
-		variant.Qual = config.Qual.getValue(line, header)
-		variant.Filter = config.Filter.getValue(line, header)
-		variant.Info = config.Info.getValues(line, header)
-		variant.Format = config.Format.getValues(line, header)
+		err, variant.Chrom = config.Chrom.getValue(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Pos = config.Pos.getValue(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Id = config.Id.getValue(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Ref = config.Ref.getValue(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Alt = config.Alt.getValue(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Qual = config.Qual.getValue(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Filter = config.Filter.getValue(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Info = config.Info.getValues(line, header)
+		if err != nil {
+			return err
+		}
+		err, variant.Format = config.Format.getValues(line, header)
+		if err != nil {
+			return err
+		}
 
 		v.Variants = append(v.Variants, variant)
 	}
+
+	return nil
 }
 
 // Get the values of all info fields and transform them to a map
-func (mcifs *MapConfigInfoFormatStruct) getValues(values []string, header []string) MapVariantInfoFormat {
+func (mcifs *MapConfigInfoFormatStruct) getValues(values []string, header []string) (error, MapVariantInfoFormat) {
 	infoMap := MapVariantInfoFormat{}
 	for k, v := range *mcifs {
+		err, value := v.getValue(values, header)
+		if err != nil {
+			return err, nil
+		}
 		infoMap[k] = VariantInfoFormat{
 			Number: v.Number,
 			Type:   v.Type,
-			Value:  v.getValue(values, header),
+			Value:  value,
 		}
 	}
-	return infoMap
+	return nil, infoMap
 }
 
 // Get the value for the given field based on the config
-func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) string {
+func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) (error, string) {
 	var prefix string
 	if cifs.Prefix != "" {
 		prefix = cifs.Prefix
 	}
 
-	return prefix + resolveField(strings.Split(cifs.Value, " "), values, header)
+	err, value := resolveField(strings.Split(cifs.Value, " "), values, header)
+	if err != nil {
+		return err, ""
+	}
+
+	return nil, prefix + value
 
 }
 
 // Get the value for the given field based on the config
-func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string) string {
+func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string) (error, string) {
 	var prefix string
 	if csfs.Prefix != "" {
 		prefix = csfs.Prefix
 	}
 
-	return prefix + resolveField(strings.Split(csfs.Value, " "), values, header)
+	err, value := resolveField(strings.Split(csfs.Value, " "), values, header)
+	if err != nil {
+		return err, ""
+	}
+
+	return nil, prefix + value
 
 }
 
 // Write the VCF struct to stdout or a file
-func (v *Vcf) Write(cCtx *cli.Context) {
+func (v *Vcf) Write(cCtx *cli.Context) error {
 	stdout := true
 	if cCtx.String("output") != "" {
 		stdout = false
@@ -220,7 +281,7 @@ func (v *Vcf) Write(cCtx *cli.Context) {
 	} else {
 		file, err := os.Create(cCtx.String("output"))
 		if err != nil {
-			log.Fatalf("Failed to create the output file: %v", err)
+			return errors.New(fmt.Sprintf("Failed to create the output file: %v", err))
 		}
 		defer file.Close()
 		file.WriteString(v.Header.String())
@@ -228,6 +289,7 @@ func (v *Vcf) Write(cCtx *cli.Context) {
 			file.WriteString(variant.String(count))
 		}
 	}
+	return nil
 }
 
 // Convert a variant to a string

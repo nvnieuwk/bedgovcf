@@ -62,11 +62,25 @@ func main() {
 			},
 		},
 		Action: func(c *cli.Context) error {
-			config := bedgovcf.ReadConfig(c.String("config"))
+			logger := log.New(os.Stderr, "", 0)
+			err, config := bedgovcf.ReadConfig(c.String("config"))
+			if err != nil {
+				logger.Fatal(err)
+			}
 			vcf := bedgovcf.Vcf{}
-			vcf.SetHeader(c, config)
-			vcf.AddVariants(c, config)
-			vcf.Write(c)
+			err = vcf.SetHeader(c, config)
+			if err != nil {
+				logger.Fatal(err)
+			}
+			err = vcf.AddVariants(c, config)
+			if err != nil {
+				logger.Fatal(err)
+			}
+			err = vcf.Write(c)
+			if err != nil {
+				logger.Fatal(err)
+			}
+
 			return nil
 		},
 	}

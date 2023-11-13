@@ -146,7 +146,7 @@ func TestStandardGetValue(t *testing.T) {
 	}
 	header := []string{"test", "test2"}
 	values := []string{"value", "I don't want this"}
-	value := config.getValue(values, header)
+	_, value := config.getValue(values, header)
 	if value != "value" {
 		t.Fatalf("Expected value to be 'value', got %s", value)
 	}
@@ -155,7 +155,7 @@ func TestStandardGetValue(t *testing.T) {
 		Value:  "test",
 		Prefix: "hello_",
 	}
-	value = config.getValue(values, header)
+	_, value = config.getValue(values, header)
 	if value != "hello_test" {
 		t.Fatalf("Expected value to be 'hello_test', got %s", value)
 	}
@@ -165,7 +165,7 @@ func TestStandardGetValue(t *testing.T) {
 	}
 	header = []string{"0", "1", "2", "3"}
 	values = []string{"value", "I don't want this", "this is the one", "definitely not this"}
-	value = config.getValue(values, header)
+	_, value = config.getValue(values, header)
 	if value != "this is the one" {
 		t.Fatalf("Expected value to be 'this is the one', got %s", value)
 	}
@@ -177,7 +177,7 @@ func TestInfoFormatGetValue(t *testing.T) {
 	}
 	header := []string{"test", "test2"}
 	values := []string{"value", "I don't want this"}
-	value := config.getValue(values, header)
+	_, value := config.getValue(values, header)
 	if value != "value" {
 		t.Fatalf("Expected value to be 'value', got %s", value)
 	}
@@ -186,7 +186,7 @@ func TestInfoFormatGetValue(t *testing.T) {
 		Value:  "test",
 		Prefix: "hello_",
 	}
-	value = config.getValue(values, header)
+	_, value = config.getValue(values, header)
 	if value != "hello_test" {
 		t.Fatalf("Expected value to be 'hello_test', got %s", value)
 	}
@@ -196,7 +196,7 @@ func TestInfoFormatGetValue(t *testing.T) {
 	}
 	header = []string{"0", "1", "2", "3"}
 	values = []string{"value", "I don't want this", "this is the one", "definitely not this"}
-	value = config.getValue(values, header)
+	_, value = config.getValue(values, header)
 	if value != "this is the one" {
 		t.Fatalf("Expected value to be 'this is the one', got %s", value)
 	}
