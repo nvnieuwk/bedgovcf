@@ -9,20 +9,13 @@ import (
 	"strings"
 )
 
-func resolveField(configValues []string, bedValues []string, header []string) string {
-
-	function := ""
-	if strings.HasPrefix(configValues[0], "~") {
-		function = configValues[0][1:]
-	} else {
-		return strings.Join(configValues, " ")
-	}
+func resolveField(configValues []string, bedValues []string, bedHeader []string) string {
 
 	input := []string{}
 	for _, v := range configValues {
 		if strings.HasPrefix(v, "$") {
 			var headerIndex int
-			for j, w := range header {
+			for j, w := range bedHeader {
 				if w == v[1:] {
 					headerIndex = j
 					break
@@ -30,8 +23,16 @@ func resolveField(configValues []string, bedValues []string, header []string) st
 			}
 			input = append(input, bedValues[headerIndex])
 			continue
+		} else {
+			input = append(input, v)
 		}
-		input = append(input, v)
+	}
+
+	function := ""
+	if strings.HasPrefix(input[0], "~") {
+		function = configValues[0][1:]
+	} else {
+		return strings.Join(input, " ")
 	}
 
 	switch function {
@@ -41,7 +42,11 @@ func resolveField(configValues []string, bedValues []string, header []string) st
 		if err != nil {
 			log.Fatalf("Failed to parse the value (%v) to a float: %v", input[1], err)
 		}
-		return fmt.Sprintf("%v", math.Round(float))
+		round := math.Round(float)
+		if round == -0 {
+			round = 0
+		}
+		return fmt.Sprintf("%v", round)
 	case "sum":
 		// ~sum <value1> <value2> ...
 		var sum float64
@@ -87,7 +92,7 @@ func resolveField(configValues []string, bedValues []string, header []string) st
 
 		vFalseResolved := ""
 		if strings.HasPrefix(vFalse[0], "~") {
-			vFalseResolved = resolveField(vFalse, bedValues, header)
+			vFalseResolved = resolveField(vFalse, bedValues, bedHeader)
 		} else {
 			vFalseResolved = strings.Join(vFalse, " ")
 		}
