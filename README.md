@@ -148,14 +148,14 @@ Pattern: `~sum <value1> <value2> ...`
 
 Adds all values together.
 
-:warning: This function will panic if the given values are not integers or a floats. :warning:
+:warning: This function will panic if the given values are not integers or floats. :warning:
 
 #### `~min`
 Pattern: `~min <value1> <value2> ...`
 
 Substracts all values from the first value.
 
-:warning: This function will panic if the given values are not integers or a floats. :warning:
+:warning: This function will panic if the given values are not integers or floats. :warning:
 
 #### `~if`
 Pattern: `~if <value1> <operator> <value2> <value_if_true> <value_if_false>`
