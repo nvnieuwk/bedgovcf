@@ -2,10 +2,10 @@ header:
   test:
     value: "test"
 chrom:
-  field: 0
+  value: $0
   prefix: chr
 pos:
-  field: 1
+  value: $1
 id:
   prefix: qdnaseq_
 ref:
@@ -26,9 +26,9 @@ filter:
       description: All filters passed
 info:
   cnv_ratio:
-    field: 4
+    value: $4
   end:
-    field: 2
+    value: $2
   svtype:
     value: CNV
   tool:

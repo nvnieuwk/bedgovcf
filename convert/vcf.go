@@ -190,19 +190,8 @@ func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) s
 		prefix = cifs.Prefix
 	}
 
-	if cifs.Field != "" {
-		var headerIndex int
-		for i, v := range header {
-			if v == cifs.Field {
-				headerIndex = i
-				break
-			}
-		}
-		return prefix + values[headerIndex]
-	} else if cifs.Value != "" {
-		return prefix + resolveField(strings.Split(cifs.Value, " "), values, header)
-	}
-	return ""
+	return prefix + resolveField(strings.Split(cifs.Value, " "), values, header)
+
 }
 
 // Get the value for the given field based on the config
@@ -212,19 +201,8 @@ func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string
 		prefix = csfs.Prefix
 	}
 
-	if csfs.Field != "" {
-		var headerIndex int
-		for i, v := range header {
-			if v == csfs.Field {
-				headerIndex = i
-				break
-			}
-		}
-		return prefix + values[headerIndex]
-	} else if csfs.Value != "" {
-		return prefix + resolveField(strings.Split(csfs.Value, " "), values, header)
-	}
-	return ""
+	return prefix + resolveField(strings.Split(csfs.Value, " "), values, header)
+
 }
 
 // Write the VCF struct to stdout or a file
