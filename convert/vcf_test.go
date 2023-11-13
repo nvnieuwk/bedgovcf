@@ -227,8 +227,8 @@ func TestVariantString(t *testing.T) {
 		},
 	}
 
-	if variant.String() != "chr1\t123\ttest\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n" {
-		t.Fatalf("Expected variant string to be 'chr1\t123\ttest\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n', got '%s'", variant.String())
+	if variant.String(1) != "chr1\t123\ttest1\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n" {
+		t.Fatalf("Expected variant string to be 'chr1\t123\ttest\tA\tC\t100\tPASS\tSVLEN=100\tGT\t0/1\n', got '%s'", variant.String(1))
 	}
 
 	variant = Variant{
@@ -265,8 +265,8 @@ func TestVariantString(t *testing.T) {
 		},
 	}
 
-	if variant.String() != "chr1	123	test	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n" {
-		t.Fatalf("Expected variant string to be 'chr1	123	test	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n', got '%s'", variant.String())
+	if variant.String(1) != "chr1	123	test1	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n" {
+		t.Fatalf("Expected variant string to be 'chr1	123	test	A	C	100	PASS	SVLEN=100;SVTYPE=DEL	GT:CN	0/1:2\n', got '%s'", variant.String(1))
 	}
 
 }

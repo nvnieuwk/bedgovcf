@@ -214,8 +214,8 @@ func (v *Vcf) Write(cCtx *cli.Context) {
 
 	if stdout {
 		fmt.Print(v.Header.String())
-		for _, variant := range v.Variants {
-			fmt.Print(variant.String())
+		for count, variant := range v.Variants {
+			fmt.Print(variant.String(count))
 		}
 	} else {
 		file, err := os.Create(cCtx.String("output"))
@@ -224,19 +224,21 @@ func (v *Vcf) Write(cCtx *cli.Context) {
 		}
 		defer file.Close()
 		file.WriteString(v.Header.String())
-		for _, variant := range v.Variants {
-			file.WriteString(variant.String())
+		for count, variant := range v.Variants {
+			file.WriteString(variant.String(count))
 		}
 	}
 }
 
 // Convert a variant to a string
-func (v Variant) String() string {
+func (v Variant) String(count int) string {
+
+	id := fmt.Sprintf("%v%v", v.Id, count)
 
 	variant := strings.Join([]string{
 		v.Chrom,
 		v.Pos,
-		v.Id,
+		id,
 		v.Ref,
 		v.Alt,
 		v.Qual,
