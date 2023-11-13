@@ -190,7 +190,6 @@ func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) s
 		prefix = cifs.Prefix
 	}
 
-	// TODO write a resolve function for conditional fields
 	if cifs.Field != "" {
 		var headerIndex int
 		for i, v := range header {
@@ -201,7 +200,7 @@ func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) s
 		}
 		return prefix + values[headerIndex]
 	} else if cifs.Value != "" {
-		return prefix + resolveField(cifs.Value, values, header)
+		return prefix + resolveField(strings.Split(cifs.Value, " "), values, header)
 	}
 	return ""
 }
@@ -213,7 +212,6 @@ func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string
 		prefix = csfs.Prefix
 	}
 
-	// TODO write a resolve function for conditional fields
 	if csfs.Field != "" {
 		var headerIndex int
 		for i, v := range header {
@@ -224,7 +222,7 @@ func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string
 		}
 		return prefix + values[headerIndex]
 	} else if csfs.Value != "" {
-		return prefix + resolveField(csfs.Value, values, header)
+		return prefix + resolveField(strings.Split(csfs.Value, " "), values, header)
 	}
 	return ""
 }

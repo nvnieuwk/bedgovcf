@@ -9,17 +9,17 @@ import (
 	"strings"
 )
 
-func resolveField(value string, values []string, header []string) string {
-	rawInput := strings.Split(value, " ")
+func resolveField(configValues []string, bedValues []string, header []string) string {
+
 	function := ""
-	if strings.HasPrefix(rawInput[0], "~") {
-		function = rawInput[0][1:]
+	if strings.HasPrefix(configValues[0], "~") {
+		function = configValues[0][1:]
 	} else {
-		return value
+		return strings.Join(configValues, " ")
 	}
 
 	input := []string{}
-	for _, v := range rawInput {
+	for _, v := range configValues {
 		if strings.HasPrefix(v, "$") {
 			var headerIndex int
 			for j, w := range header {
@@ -28,7 +28,7 @@ func resolveField(value string, values []string, header []string) string {
 					break
 				}
 			}
-			input = append(input, values[headerIndex])
+			input = append(input, bedValues[headerIndex])
 			continue
 		}
 		input = append(input, v)
@@ -75,7 +75,7 @@ func resolveField(value string, values []string, header []string) string {
 		operator := input[2]
 		v2 := input[3]
 		vTrue := input[4]
-		vFalse := input[5]
+		vFalse := input[5:]
 
 		floatV1, err1 := strconv.ParseFloat(v1, 64)
 		floatV2, err2 := strconv.ParseFloat(v2, 64)
@@ -85,43 +85,50 @@ func resolveField(value string, values []string, header []string) string {
 			log.Fatalf("Failed to parse the values (%v and %v) to a float: %v and %v", v1, v2, err1, err2)
 		}
 
+		vFalseResolved := ""
+		if strings.HasPrefix(vFalse[0], "~") {
+			vFalseResolved = resolveField(vFalse, bedValues, header)
+		} else {
+			vFalseResolved = strings.Join(vFalse, " ")
+		}
+
 		switch operator {
 		case "<":
 			if floatV1 < floatV2 {
 				return vTrue
 			} else {
-				return vFalse
+				return vFalseResolved
 			}
 		case ">":
 			if floatV1 > floatV2 {
 				return vTrue
 			} else {
-				return vFalse
+				return vFalseResolved
 			}
 		case ">=":
 			if floatV1 >= floatV2 {
 				return vTrue
 			} else {
-				return vFalse
+				return vFalseResolved
 			}
 		case "<=":
 			if floatV1 <= floatV2 {
 				return vTrue
 			} else {
-				return vFalse
+				return vFalseResolved
 			}
 		case "==":
 			if err1 == nil && err2 == nil {
 				if floatV1 == floatV2 {
 					return vTrue
 				} else {
-					return vFalse
+					return vFalseResolved
 				}
 			} else {
 				if v1 == v2 {
 					return vTrue
 				} else {
-					return vFalse
+					return vFalseResolved
 				}
 			}
 		}
