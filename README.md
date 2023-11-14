@@ -165,6 +165,19 @@ Checks if the given condition (`<value1> <operator> <value2>`) is true for the g
 Supported operators: `<`, `<=`, `>`, `>=`, `==`, `!=`
 
 ## Installation
+### Mamba/Conda
+This is the preffered way of installing BedGoVcf.
+
+```bash
+mamba install -c bioconda bedgovcf
+```
+
+or with conda:
+  
+```bash 
+conda install -c bioconda bedgovcf
+```
+
 ### Precompiled binaries
 Precompiled binaries are available for Linux and macOS on the [releases page](https://github.com/nvnieuwk/bedgovcf/releases).
 
