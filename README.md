@@ -76,6 +76,7 @@ filter:
       description: Low quality
 
 # Optional info fields (will default to no info fields)
+# These are some examples, but you can add whatever fields you want
 info:
   - name: SVTYPE # The name of the info field
     value: ~if $4 < 0 DEL DUP # The value to use for the info field
@@ -94,6 +95,7 @@ info:
     description: End position of structural variant
 
 # Optional format fields (will default to no format fields)
+# These are some examples, but you can add whatever fields you want
 format:
   - name: GT # The name of the format field
     value: ~if $4 < 0 0/1 1/1 # The value to use for the format field
