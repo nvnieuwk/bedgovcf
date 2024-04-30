@@ -46,7 +46,7 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 		if round == -0 {
 			round = 0
 		}
-		return fmt.Sprintf("%v", round), nil
+		return strconv.FormatFloat(round, 'f', -1, 64), nil
 	case "sum":
 		// ~sum <value1> <value2> ...
 		var sum float64
@@ -58,7 +58,7 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 			sum += float
 		}
 
-		return strconv.FormatFloat(sum, 'g', -1, 64), nil
+		return strconv.FormatFloat(sum, 'f', -1, 64), nil
 	case "min":
 		// ~min <startValue> <valueToSubstract1> <valueToSubstract2> ...
 		min, err := strconv.ParseFloat(input[1], 64)
@@ -72,7 +72,7 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 			}
 			min -= float
 		}
-		return strconv.FormatFloat(min, 'g', -1, 64), nil
+		return strconv.FormatFloat(min, 'f', -1, 64), nil
 	case "if":
 		// ~if <value1> <operator> <value2> <value_if_true> <value_if_false>
 		// supported operators: > < >= <= ==
