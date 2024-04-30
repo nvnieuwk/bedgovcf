@@ -63,7 +63,7 @@ func main() {
 		},
 		Action: func(c *cli.Context) error {
 			logger := log.New(os.Stderr, "", 0)
-			err, config := bedgovcf.ReadConfig(c.String("config"))
+			config, err := bedgovcf.ReadConfig(c.String("config"))
 			if err != nil {
 				logger.Fatal(err)
 			}

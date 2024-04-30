@@ -1,7 +1,6 @@
 package bedgovcf
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -11,20 +10,20 @@ import (
 )
 
 // Read the configuration file, cast it to its struct and validate
-func ReadConfig(configString string) (error, Config) {
+func ReadConfig(configString string) (Config, error) {
 	configFile, err := os.ReadFile(configString)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to open the config file: %v", err)), Config{}
+		return Config{}, fmt.Errorf("failed to open the config file: %v", err)
 	}
 
 	var config Config
 
 	if err := yaml.Unmarshal(configFile, &config); err != nil {
-		return errors.New(fmt.Sprintf("Failed to open the config file: %v", err)), Config{}
+		return Config{}, fmt.Errorf("failed to open the config file: %v", err)
 	}
 
 	config.validate()
-	return nil, config
+	return config, nil
 }
 
 // Validate the config
