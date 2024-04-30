@@ -1,7 +1,6 @@
 package bedgovcf
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"math"
@@ -10,7 +9,7 @@ import (
 	"strings"
 )
 
-func resolveField(configValues []string, bedValues []string, bedHeader []string) (error, string) {
+func resolveField(configValues []string, bedValues []string, bedHeader []string) (string, error) {
 
 	input := []string{}
 	for _, v := range configValues {
@@ -33,7 +32,7 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 	if strings.HasPrefix(input[0], "~") {
 		function = configValues[0][1:]
 	} else {
-		return nil, strings.Join(input, " ")
+		return strings.Join(input, " "), nil
 	}
 
 	switch function {
@@ -41,30 +40,30 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 		// ~round <value>
 		float, err := strconv.ParseFloat(input[1], 64)
 		if err != nil {
-			return errors.New(fmt.Sprintf("Failed to parse the value (%v) to a float: %v", input[1], err)), ""
+			return "", fmt.Errorf("failed to parse the value (%v) to a float: %v", input[1], err)
 		}
 		round := math.Round(float)
 		if round == -0 {
 			round = 0
 		}
-		return nil, fmt.Sprintf("%v", round)
+		return fmt.Sprintf("%v", round), nil
 	case "sum":
 		// ~sum <value1> <value2> ...
 		var sum float64
 		for _, v := range input[1:] {
 			float, err := strconv.ParseFloat(v, 64)
 			if err != nil {
-				return errors.New(fmt.Sprintf("Failed to parse the value (%v) to a float: %v", v, err)), ""
+				return "", fmt.Errorf("failed to parse the value (%v) to a float: %v", v, err)
 			}
 			sum += float
 		}
 
-		return nil, strconv.FormatFloat(sum, 'g', -1, 64)
+		return strconv.FormatFloat(sum, 'g', -1, 64), nil
 	case "min":
 		// ~min <startValue> <valueToSubstract1> <valueToSubstract2> ...
 		min, err := strconv.ParseFloat(input[1], 64)
 		if err != nil {
-			return errors.New(fmt.Sprintf("Failed to parse the value (%v) to a float: %v", input[1], err)), ""
+			return "", fmt.Errorf("failed to parse the value (%v) to a float: %v", input[1], err)
 		}
 		for _, v := range input[2:] {
 			float, err := strconv.ParseFloat(v, 64)
@@ -73,7 +72,7 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 			}
 			min -= float
 		}
-		return nil, strconv.FormatFloat(min, 'g', -1, 64)
+		return strconv.FormatFloat(min, 'g', -1, 64), nil
 	case "if":
 		// ~if <value1> <operator> <value2> <value_if_true> <value_if_false>
 		// supported operators: > < >= <= ==
@@ -88,15 +87,15 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 
 		floatOperators := []string{"<", ">", "<=", ">="}
 		if slices.Contains(floatOperators, operator) && (err1 != nil || err2 != nil) {
-			return errors.New(fmt.Sprintf("Failed to parse the values (%v and %v) to a float: %v and %v", v1, v2, err1, err2)), ""
+			return "", fmt.Errorf("failed to parse the values (%v and %v) to a float: %v and %v", v1, v2, err1, err2)
 		}
 
 		vFalseResolved := ""
 		var err error
 		if strings.HasPrefix(vFalse[0], "~") {
-			err, vFalseResolved = resolveField(vFalse, bedValues, bedHeader)
+			vFalseResolved, err = resolveField(vFalse, bedValues, bedHeader)
 			if err != nil {
-				return err, ""
+				return "", err
 			}
 		} else {
 			vFalseResolved = strings.Join(vFalse, " ")
@@ -105,43 +104,43 @@ func resolveField(configValues []string, bedValues []string, bedHeader []string)
 		switch operator {
 		case "<":
 			if floatV1 < floatV2 {
-				return nil, vTrue
+				return vTrue, nil
 			} else {
-				return nil, vFalseResolved
+				return vFalseResolved, nil
 			}
 		case ">":
 			if floatV1 > floatV2 {
-				return nil, vTrue
+				return vTrue, nil
 			} else {
-				return nil, vFalseResolved
+				return vFalseResolved, nil
 			}
 		case ">=":
 			if floatV1 >= floatV2 {
-				return nil, vTrue
+				return vTrue, nil
 			} else {
-				return nil, vFalseResolved
+				return vFalseResolved, nil
 			}
 		case "<=":
 			if floatV1 <= floatV2 {
-				return nil, vTrue
+				return vTrue, nil
 			} else {
-				return nil, vFalseResolved
+				return vFalseResolved, nil
 			}
 		case "==":
 			if v1 == v2 {
-				return nil, vTrue
+				return vTrue, nil
 			} else {
-				return nil, vFalseResolved
+				return vFalseResolved, nil
 			}
 		case "!=":
 			if v1 != v2 {
-				return nil, vTrue
+				return vTrue, nil
 			} else {
-				return nil, vFalseResolved
+				return vFalseResolved, nil
 			}
 		}
 	}
 
-	err := errors.New(fmt.Sprintf("The function %v is not supported", function))
-	return err, ""
+	err := fmt.Errorf("the function %v is not supported", function)
+	return "", err
 }

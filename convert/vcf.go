@@ -121,7 +121,7 @@ func (h *Header) setContigs(faidx string) error {
 
 	file, err := os.Open(faidx)
 	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to open the fasta index file: %v", err))
+		return fmt.Errorf("failed to open the fasta index file: %v", err)
 	}
 	defer file.Close()
 
@@ -141,7 +141,7 @@ func (h *Header) setContigs(faidx string) error {
 func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) error {
 	file, err := os.Open(cCtx.String("bed"))
 	if err != nil {
-		return errors.New(fmt.Sprintf("Failed to open the bed file: %v", err))
+		return fmt.Errorf("failed to open the bed file: %v", err)
 	}
 	defer file.Close()
 
@@ -168,45 +168,45 @@ func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) error {
 		}
 
 		if len(line) != len(header) {
-			return errors.New("The amount of columns in the BED file is not consistent.\n Check if there aren't any additional lines at the top of the bed file (and use --skip to tell bedgovcf to skip these lines).")
+			return errors.New("the amount of columns in the BED file is not consistent\n check if there aren't any additional lines at the top of the bed file (and use --skip to tell bedgovcf to skip these lines)")
 		}
 
 		variant := Variant{}
 
 		//Standard fields
-		err, variant.Chrom = config.Chrom.getValue(line, header)
+		variant.Chrom, err = config.Chrom.getValue(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Pos = config.Pos.getValue(line, header)
+		variant.Pos, err = config.Pos.getValue(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Id = config.Id.getValue(line, header)
+		variant.Id, err = config.Id.getValue(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Ref = config.Ref.getValue(line, header)
+		variant.Ref, err = config.Ref.getValue(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Alt = config.Alt.getValue(line, header)
+		variant.Alt, err = config.Alt.getValue(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Qual = config.Qual.getValue(line, header)
+		variant.Qual, err = config.Qual.getValue(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Filter = config.Filter.getValue(line, header)
+		variant.Filter, err = config.Filter.getValue(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Info = config.Info.getValues(line, header)
+		variant.Info, err = config.Info.getValues(line, header)
 		if err != nil {
 			return err
 		}
-		err, variant.Format = config.Format.getValues(line, header)
+		variant.Format, err = config.Format.getValues(line, header)
 		if err != nil {
 			return err
 		}
@@ -218,12 +218,12 @@ func (v *Vcf) AddVariants(cCtx *cli.Context, config Config) error {
 }
 
 // Get the values of all info fields and transform them to a map
-func (mcifs *SliceConfigInfoFormatStruct) getValues(values []string, header []string) (error, SliceVariantInfoFormat) {
+func (mcifs *SliceConfigInfoFormatStruct) getValues(values []string, header []string) (SliceVariantInfoFormat, error) {
 	infoMap := SliceVariantInfoFormat{}
 	for _, v := range *mcifs {
-		err, value := v.getValue(values, header)
+		value, err := v.getValue(values, header)
 		if err != nil {
-			return err, nil
+			return nil, err
 		}
 		infoMap = append(infoMap, VariantInfoFormat{
 			Name:   v.Name,
@@ -232,38 +232,38 @@ func (mcifs *SliceConfigInfoFormatStruct) getValues(values []string, header []st
 			Value:  value,
 		})
 	}
-	return nil, infoMap
+	return infoMap, nil
 }
 
 // Get the value for the given field based on the config
-func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) (error, string) {
+func (cifs *ConfigInfoFormatStruct) getValue(values []string, header []string) (string, error) {
 	var prefix string
 	if cifs.Prefix != "" {
 		prefix = cifs.Prefix
 	}
 
-	err, value := resolveField(strings.Split(cifs.Value, " "), values, header)
+	value, err := resolveField(strings.Split(cifs.Value, " "), values, header)
 	if err != nil {
-		return err, ""
+		return "", err
 	}
 
-	return nil, prefix + value
+	return prefix + value, nil
 
 }
 
 // Get the value for the given field based on the config
-func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string) (error, string) {
+func (csfs *ConfigStandardFieldStruct) getValue(values []string, header []string) (string, error) {
 	var prefix string
 	if csfs.Prefix != "" {
 		prefix = csfs.Prefix
 	}
 
-	err, value := resolveField(strings.Split(csfs.Value, " "), values, header)
+	value, err := resolveField(strings.Split(csfs.Value, " "), values, header)
 	if err != nil {
-		return err, ""
+		return "", err
 	}
 
-	return nil, prefix + value
+	return prefix + value, nil
 
 }
 
@@ -282,7 +282,7 @@ func (v *Vcf) Write(cCtx *cli.Context) error {
 	} else {
 		file, err := os.Create(cCtx.String("output"))
 		if err != nil {
-			return errors.New(fmt.Sprintf("Failed to create the output file: %v", err))
+			return fmt.Errorf("failed to create the output file: %v", err)
 		}
 		defer file.Close()
 		file.WriteString(v.Header.String())
