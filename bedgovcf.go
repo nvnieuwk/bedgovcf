@@ -13,7 +13,7 @@ func main() {
 		Name:            "bedgovcf",
 		Usage:           "Convert a BED file to a VCF file according to a YAML config",
 		HideHelpCommand: true,
-		Version:         "0.1.0",
+		Version:         "0.1.1",
 		Flags: []cli.Flag{
 			&cli.StringFlag{
 				Name:     "output",
